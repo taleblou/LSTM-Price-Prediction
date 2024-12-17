@@ -18,6 +18,8 @@ The model predicts the *Open*, *High*, *Low*, and *Close* prices for various fin
 | Mean Absolute Error | 2345.0968 | 2048.0973 | 3368.6117 | 2302.3418 |
 | R-squared | 0.9385 | 0.9526 | 0.9000 | 0.9431 |
 
+### **![][image2]**
+
 ### **GC=F (Gold Futures)**
 
 | Metric | Open | High | Low | Close |
@@ -25,6 +27,8 @@ The model predicts the *Open*, *High*, *Low*, and *Close* prices for various fin
 | Mean Squared Error | 10148.2786 | 8175.4420 | 11819.7386 | 9811.8358 |
 | Mean Absolute Error | 91.9097 | 79.6697 | 99.7951 | 90.0049 |
 | R-squared | 0.6548 | 0.7219 | 0.5979 | 0.6662 |
+
+### **![][image1]**
 
 ### **EURUSD (Euro/US Dollar)**
 
@@ -34,6 +38,8 @@ The model predicts the *Open*, *High*, *Low*, and *Close* prices for various fin
 | Mean Absolute Error | 0.0042 | 0.0041 | 0.2971 | 0.0039 |
 | R-squared | 0.9021 | 0.9036 | \-306.0254 | 0.9123 |
 
+### **![][image3]**
+
 ### **GSPC (S\&P 500 Index)**
 
 | Metric | Open | High | Low | Close |
@@ -41,6 +47,8 @@ The model predicts the *Open*, *High*, *Low*, and *Close* prices for various fin
 | Mean Squared Error | 6050553.1236 | 6094072.4446 | 6053440.1188 | 6102242.6178 |
 | Mean Absolute Error | 2413.1240 | 2421.2500 | 2410.4758 | 2419.9703 |
 | R-squared | \-68.4462 | \-68.9457 | \-68.4794 | \-69.0395 |
+
+### **![][image4]**
 
 ---
 
@@ -58,3 +66,8 @@ These results and similar projects have been a part of my experience working on 
 
 This LSTM implementation represents an initial effort to predict price movements across multiple asset classes. The model is open for public use, and I encourage everyone to build upon it. For further improvements and related projects, check out my GitHub repository.
 
+
+[image1]: <https://raw.githubusercontent.com/taleblou/LSTM-Price-Prediction/refs/heads/main/Plot/LSTM_BTC-USD.png>
+[image2]: <https://raw.githubusercontent.com/taleblou/LSTM-Price-Prediction/refs/heads/main/Plot/LSTM_GC%3DF.png>
+[image3]: <https://raw.githubusercontent.com/taleblou/LSTM-Price-Prediction/refs/heads/main/Plot/LSTM_EURUSD%3DX.png>
+[image4]: <https://raw.githubusercontent.com/taleblou/LSTM-Price-Prediction/refs/heads/main/Plot/LSTM_%5EGSPC.png>
