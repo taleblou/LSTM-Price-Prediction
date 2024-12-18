@@ -5,7 +5,8 @@ from keras import Sequential
 from keras.src.layers import LSTM, Dropout, Dense
 from sklearn.preprocessing import MinMaxScaler
 import tensorflow as tf
-from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
+from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score, median_absolute_error, \
+    explained_variance_score
 import yfinance as yf
 import os
 from tqdm import tqdm
@@ -58,6 +59,7 @@ data.to_csv(f"{name}.csv")
 # data.to_csv("GC=F.csv")
 
 data=data[["Close","Open","High","Low"]]
+data=data[-1000:]
 # Initialize the scaler
 scaler = MinMaxScaler()
 # Fit and transform the DataFrame
@@ -70,13 +72,13 @@ data = pd.DataFrame(scaled_data, columns=data.columns, index=data.index)
 
 
 data["y_Close"]=data['Close']
-data["y_Close"]=data["y_Close"].shift()
+data["y_Close"]=data["y_Close"].shift(-1)
 data["y_Open"]=data['Open']
-data["y_Open"]=data["y_Open"].shift()
+data["y_Open"]=data["y_Open"].shift(-1)
 data["y_High"]=data['High']
-data["y_High"]=data["y_High"].shift()
+data["y_High"]=data["y_High"].shift(-1)
 data["y_Low"]=data['Low']
-data["y_Low"]=data["y_Low"].shift()
+data["y_Low"]=data["y_Low"].shift(-1)
 data.dropna(inplace=True)
 
 X=data[["Close","Open","High","Low"]]
@@ -88,6 +90,15 @@ data["p_Open"]= np.nan
 data["p_Close"]= np.nan
 
 
+data["o_p_Low"]= np.nan
+data["o_p_High"]= np.nan
+data["o_p_Open"]= np.nan
+data["o_p_Close"]= np.nan
+
+data["o_y_Low"]= np.nan
+data["o_y_High"]= np.nan
+data["o_y_Open"]= np.nan
+data["o_y_Close"]= np.nan
 
 
 
@@ -111,15 +122,16 @@ for i in tqdm(range(box-1)):
             model=build_LSTM_model(Xtrain, Y_train["y_"+c],Xval, Y_val["y_"+c])
 
         predictions = model.predict(Xtest, verbose=0)
+        data.loc[data.index[i - box + 1], 'p_'+c]=predictions[0][0]
         predictions=np.tile(predictions, 4).reshape(1, 4)
         predictions = scaler.inverse_transform(predictions)
-        data.loc[data.index[i - box + 1], 'p_'+c] = predictions[0][0]
+        data.loc[data.index[i - box + 1], 'o_p_'+c] = predictions[0][0]
         target = scaler.inverse_transform(Y_test)
-        data.loc[data.index[i - box + 1], 'y_'+c] = target[0][0]
+        data.loc[data.index[i - box + 1], 'o_y_'+c] = target[0][0]
 
 
 # Calculate Accuracy (for classification)
-df= data[['y_Open','p_Open','y_Close','p_Close','y_High','p_High','y_Low','p_Low']]
+df= data[['y_Open','p_Open','y_Close','p_Close','y_High','p_High','y_Low','p_Low','o_y_Open','o_p_Open','o_y_Close','o_p_Close','o_y_High','o_p_High','o_y_Low','o_p_Low']]
 df.dropna(inplace=True)
 df.to_csv(f"Predict_{name}.csv")
 
@@ -134,15 +146,22 @@ for c in ['Open','High','Low','Close']:
 
     # R-squared (R2)
     r2 = r2_score(df['y_' + c], df['p_' + c])
+    # Median Absolute Error
+    medae = median_absolute_error(df['y_' + c], df['p_' + c])
+
+    #Explained Variance Score
+    evs = explained_variance_score(df['y_' + c], df['p_' + c])
 
     text_write(f"Mean Squared Error({c}): {mse}")
     text_write(f"Mean Absolute Error({c}): {mae}")
     text_write(f"R-squared({c}): {r2}")
+    text_write(f"Median Absolute Error({c}): {medae}")
+    text_write(f"Explained Variance Score({c}): {evs}")
     fig, axes = plt.subplots()
 
     # Open price plot
-    plt.plot(df.index, df['y_'+c], label='Actual '+c+' Price', color='blue')
-    plt.plot(df['p_'+c], label='Predicted '+c+' Price', color='green')
+    plt.plot(df.index, df['o_y_'+c], label='Actual '+c+' Price', color='blue')
+    plt.plot(df['o_p_'+c], label='Predicted '+c+' Price', color='green')
     plt.title(f'{c} Price Prediction')
     plt.legend()
     plt.grid()
